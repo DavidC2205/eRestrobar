@@ -90,4 +90,19 @@ $(function () {
         }
     });
     
+    ticks: $.extend({
+        beginAtZero: true,
+        // Modificar la función de callback para mostrar los valores sin decimales y divididos por 1000 si son múltiplos de 1000
+        callback: function (value) {
+            if (value % 100 !== 0) {
+                // Si el valor no es un múltiplo de 100, redondearlo hacia arriba al múltiplo de 100 más cercano
+                value = Math.ceil(value / 100) * 100;
+            }
+            // Convertir a formato de dinero sin decimales
+            var formattedValue = '$' + value.toLocaleString('en-US', {minimumFractionDigits: 0});
+            return formattedValue;
+        }
+    }, ticksStyle)
+    
+
 })

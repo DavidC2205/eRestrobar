@@ -9,10 +9,12 @@ if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
         $precio = $_POST['precio'];
         $foto_actual = $_POST['foto_actual'];
         $foto = $_FILES['foto'];
+        $categoria = $_POST['categoria']; // Nuevo campo de categoría
         $fecha = date('YmdHis');
-        if (empty($plato) || empty($precio) || $precio < 0) {
+        
+        if (empty($plato) || empty($precio) || $precio < 0 || empty($categoria)) {
             $alert = '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        Todo los campos son obligatorios
+                        Todos los campos son obligatorios, incluida la categoría
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -36,7 +38,7 @@ if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
                         </button>
                     </div>';
                 } else {
-                    $query_insert = mysqli_query($conexion, "INSERT INTO platos (nombre,precio,imagen) VALUES ('$plato', '$precio', '$nombre')");
+                    $query_insert = mysqli_query($conexion, "INSERT INTO platos (nombre, precio, imagen, categoria_id) VALUES ('$plato', '$precio', '$nombre', '$categoria')");
                     if ($query_insert) {
                         if (!empty($foto['name'])) {
                             move_uploaded_file($foto['tmp_name'], $nombre);
@@ -54,7 +56,7 @@ if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
                     }
                 }
             } else {
-                $query_update = mysqli_query($conexion, "UPDATE platos SET nombre = '$plato', precio=$precio, imagen='$nombre' WHERE id = $id");
+                $query_update = mysqli_query($conexion, "UPDATE platos SET nombre = '$plato', precio=$precio, imagen='$nombre', categoria_id='$categoria' WHERE id = $id");
                 if ($query_update) {
                     if (!empty($foto['name'])) {
                         move_uploaded_file($foto['tmp_name'], $nombre);
@@ -78,6 +80,7 @@ if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
     }
     include_once "includes/header.php";
 ?>
+<- Cambios realizados en el apartado de platos, ahora seran catalogados por Categorias-!>
     <div class="card shadow-lg">
         <div class="card-body">
             <div class="row">
@@ -107,6 +110,28 @@ if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
                                             <input type="file" class="form-control" name="foto" id="foto">
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+       <div class="form-group">
+        <label for="categoria" class="text-dark font-weight-bold">Categoría</label>
+        <select class="form-control" id="categoria" name="categoria">
+            <option value="">Seleccione una categoría</option>
+            <?php
+            // Consulta SQL para obtener las categorías de platos
+            $query_categorias = mysqli_query($conexion, "SELECT * FROM categorias");
+            // Comprueba si hay resultados
+            if ($query_categorias && mysqli_num_rows($query_categorias) > 0) {
+                // Itera sobre las categorías y crea las opciones
+                while ($categoria = mysqli_fetch_assoc($query_categorias)) {
+                    echo "<option value='" . $categoria['id'] . "'>" . $categoria['nombre'] . "</option>";
+                }
+            }
+            ?>
+        </select>
+    </div>
+</div>
+
+                                    
+                                    
                                     <div class="col-md-3 form-group">
                                         <label for="">Acciones</label> <br>
                                         <input type="submit" value="Registrar" class="btn btn-primary" id="btnAccion">

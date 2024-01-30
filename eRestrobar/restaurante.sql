@@ -179,6 +179,57 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `pass`, `rol`, `estado`) VALUES
 (1, 'SISTEMAS FREE', 'admin@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 1, 1);
 
+-- Estructura de tabla para la tabla `categorias`
+CREATE TABLE `categorias` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- Estructura de tabla para la tabla `platos`
+ALTER TABLE `platos`
+  ADD COLUMN `categoria_id` int(11) NOT NULL;
+
+-- Volcado de datos para la tabla `categorias`
+INSERT INTO `categorias` (`id`, `nombre`) VALUES
+(1, 'Entradas'),
+(2, 'Platos principales'),
+(3, 'Postres');
+
+-- Restricciones para tablas volcadas
+ALTER TABLE `platos`
+  ADD CONSTRAINT `fk_platos_categorias` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`);
+
+-- Estructura de tabla para la tabla `ventas`
+CREATE TABLE `ventas` (
+  `id` int(11) NOT NULL,
+  `mozo` varchar(200) NOT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
+  `total` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- Estructura de tabla para la tabla `ventas_platos`
+CREATE TABLE `ventas_platos` (
+  `venta_id` int(11) NOT NULL,
+  `plato_id` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
+
+ALTER TABLE `platos` ADD COLUMN `id_categoria` INT(11) NOT NULL;
+
+-- Restricciones para tablas volcadas
+ALTER TABLE `ventas`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `ventas_platos`
+  ADD CONSTRAINT `fk_ventas_platos_ventas` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`),
+  ADD CONSTRAINT `fk_ventas_platos_platos` FOREIGN KEY (`plato_id`) REFERENCES `platos` (`id`);
+
+
+
+
 --
 -- Índices para tablas volcadas
 --
